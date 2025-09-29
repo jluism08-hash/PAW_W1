@@ -1,0 +1,51 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="PAW_W1.SiteMaster" %>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+  <title>Tarea 1 - Programación Avanzada Web</title>
+  <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+  <script src="<%: ResolveUrl("~/Scripts/jquery-3.7.0.js") %>"></script>
+  <script src="<%: ResolveUrl("~/Scripts/bootstrap.bundle.min.js") %>"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
+  <link href="<%: ResolveUrl("~/Content/bootstrap.css") %>" rel="stylesheet" />
+</head>
+<body>
+  <form id="form1" runat="server">
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Tarea 1</a>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <asp:HyperLink runat="server" NavigateUrl="~/UI/Products.aspx" Text="Productos" CssClass="nav-link" />
+            </li>
+            <li class="nav-item">
+              <asp:HyperLink runat="server" NavigateUrl="~/UI/Perfil.aspx" Text="Perfil" CssClass="nav-link" />
+            </li>
+            <li class="nav-item">
+              <asp:HyperLink runat="server" NavigateUrl="~/UI/Logout.aspx" Text="Cerrar Sesión" CssClass="nav-link" />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="container my-4">
+      <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-light border-top py-2 mt-auto">
+      <div class="container d-flex justify-content-between align-items-center">
+        <span class="text-muted small">© 2025 - Programación Avanzada Web</span>
+        <span class="text-muted small">
+          Usuario en sesión: <strong><%= Session["Usuario"] ?? "Invitado" %></strong>
+        </span>
+      </div>
+    </footer>
+  </form>
+</body>
+</html>
+
