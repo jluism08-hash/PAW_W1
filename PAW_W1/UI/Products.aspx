@@ -2,13 +2,10 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
   <style>
-    /* Solo presentación, no cambia lógica */
     .page-title { display:flex; align-items:center; justify-content:space-between; }
-    /* Truncar Descripción (columna 3) sin romper tabla */
     #<%= gvProducts.ClientID %> td:nth-child(3){
       max-width:520px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
-    /* Estado “sin resultados” más legible */
     .empty-row { text-align:center; color:#6c757d; padding:1rem 0; }
   </style>
 
@@ -43,40 +40,43 @@
       </div>
     </div>
   </div>
-
-  <!-- jQuery (igual que tenías) -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-  <!-- Tu JS intacto; solo una clase para el “sin resultados” (presentación) -->
   <script type="text/javascript">
-      function $tbl() { return $("#<%= gvProducts.ClientID %>"); }
-      function clearDataRows() { $tbl().find("tr").filter(function () { return $(this).children("td").length > 0; }).remove(); }
+      function clearDataRows() {
+          $("#<%= gvProducts.ClientID %>").find("tr").filter(function () {
+              return $(this).children("td").length > 0;
+          }).remove();
+      }
       function appendAfterHeader(htmlRows) {
-          const $t = $tbl(), $lastHeader = $t.find("tr:has(th)").last();
+          const $t = $("#<%= gvProducts.ClientID %>"), $lastHeader = $t.find("tr:has(th)").last();
           if ($lastHeader.length) { $lastHeader.after(htmlRows); } else { $t.append(htmlRows); }
       }
       function renderRows(items) {
           clearDataRows();
-          if (!items || !items.length) { appendAfterHeader('<tr><td class="empty-row" colspan="5">Sin resultados</td></tr>'); return; }
+          if (!items || !items.length) {
+              appendAfterHeader('<tr><td class="empty-row" colspan="5">Sin resultados</td></tr>'); return;
+          }
           let rows = "";
           for (const p of items) {
               rows += `<tr>
-          <td>${p.Id}</td>
-          <td>${p.Nombre ?? ""}</td>
-          <td>${p.Descripcion ?? ""}</td>
-          <td>${p.Precio}</td>
-          <td>${p.Cantidad}</td>
-        </tr>`;
+                          <td>${p.Id}</td>
+                          <td>${p.Nombre ?? ""}</td>
+                          <td>${p.Descripcion ?? ""}</td>
+                          <td>${p.Precio}</td>
+                          <td>${p.Cantidad}</td>
+                        </tr>`;
           }
           appendAfterHeader(rows);
       }
 
       function cargarTodo() {
           $.ajax({
-              type: "POST", url: "Products.aspx/ListarTodos",
-              contentType: "application/json; charset=utf-8", dataType: "json",
-              success: res => renderRows(res.d)
-          });
+              type: "POST",
+              url: "Products.aspx/ListarTodos",
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+          })
+         .done(res => renderRows(res.d))
+         .fail(xhr => console.error("HTTP", xhr.status, xhr.responseText));
       }
       function buscarNombre(q) {
           $.ajax({
@@ -90,14 +90,14 @@
           .fail(xhr => console.error("HTTP", xhr.status, xhr.responseText));
       }
 
-      let debounceId = null;
       $(function () {
-          cargarTodo();
           $("#txtBuscar").on("input", function () {
               const q = this.value.trim();
-              if (debounceId) { clearTimeout(debounceId); debounceId = null; }
-              if (q.length < 2) { cargarTodo(); return; }
-              debounceId = setTimeout(() => buscarNombre(q), 200);
+              if (q.length < 2) {
+                  cargarTodo();
+                  return;
+              }
+              buscarNombre(q); 
           });
       });
   </script>
